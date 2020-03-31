@@ -1,82 +1,205 @@
-/*
-ID: 19637526
-ишова ЂнастасиЯ 
+п»ї/*
+RunID: 20224174
 
-‚ычислить площадь выпуклого n-угольника, заданного координатами своих вершин.
-‚ начале вводится количество вершин, затем последовательно целочисленные 
-координаты всех вершин в порядке обхода против часовой стрелки.
+РЁРёС€РѕРІР° РђРЅР°СЃС‚Р°СЃРёСЏ
+Р—Р°РґР°С‡Р°: 1_2
 
-“казание:
-„ля вычисления площади n-угольника посчитать сумму ориентированных площадей
-трапеций под каждой стороной многоугольника.
+Р РµР°Р»РёР·СѓР№С‚Рµ СЃС‚СЂСѓРєС‚СѓСЂСѓ РґР°РЅРЅС‹С… С‚РёРїР° вЂњРјРЅРѕР¶РµСЃС‚РІРѕ СЃС‚СЂРѕРєвЂќ РЅР° РѕСЃРЅРѕРІРµ РґРёРЅР°РјРёС‡РµСЃРєРѕР№ С…РµС€-С‚Р°Р±Р»РёС†С‹ СЃ РѕС‚РєСЂС‹С‚РѕР№ Р°РґСЂРµСЃР°С†РёРµР№.
+РҐСЂР°РЅРёРјС‹Рµ СЃС‚СЂРѕРєРё РЅРµРїСѓСЃС‚С‹Рµ Рё СЃРѕСЃС‚РѕСЏС‚ РёР· СЃС‚СЂРѕС‡РЅС‹С… Р»Р°С‚РёРЅСЃРєРёС… Р±СѓРєРІ.
+РҐРµС€-С„СѓРЅРєС†РёСЏ СЃС‚СЂРѕРєРё РґРѕР»Р¶РЅР° Р±С‹С‚СЊ СЂРµР°Р»РёР·РѕРІР°РЅР° СЃ РїРѕРјРѕС‰СЊСЋ РІС‹С‡РёСЃР»РµРЅРёСЏ Р·РЅР°С‡РµРЅРёСЏ РјРЅРѕРіРѕС‡Р»РµРЅР° РјРµС‚РѕРґРѕРј Р“РѕСЂРЅРµСЂР°.
+РќР°С‡Р°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ С‚Р°Р±Р»РёС†С‹ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°РІРЅС‹Рј 8-РјРё. РџРµСЂРµС…РµС€РёСЂРѕРІР°РЅРёРµ РІС‹РїРѕР»РЅСЏР№С‚Рµ РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё СЌР»РµРјРµРЅС‚РѕРІ РІ СЃР»СѓС‡Р°Рµ,
+РєРѕРіРґР° РєРѕСЌС„С„РёС†РёРµРЅС‚ Р·Р°РїРѕР»РЅРµРЅРёСЏ С‚Р°Р±Р»РёС†С‹ РґРѕСЃС‚РёРіР°РµС‚ 3/4.
+РЎС‚СЂСѓРєС‚СѓСЂР° РґР°РЅРЅС‹С… РґРѕР»Р¶РЅР° РїРѕРґРґРµСЂР¶РёРІР°С‚СЊ РѕРїРµСЂР°С†РёРё РґРѕР±Р°РІР»РµРЅРёСЏ СЃС‚СЂРѕРєРё РІ РјРЅРѕР¶РµСЃС‚РІРѕ, СѓРґР°Р»РµРЅРёСЏ СЃС‚СЂРѕРєРё РёР· РјРЅРѕР¶РµСЃС‚РІР° Рё
+РїСЂРѕРІРµСЂРєРё РїСЂРёРЅР°РґР»РµР¶РЅРѕСЃС‚Рё РґР°РЅРЅРѕР№ СЃС‚СЂРѕРєРё РјРЅРѕР¶РµСЃС‚РІСѓ.
+
+Р”Р»СЏ СЂР°Р·СЂРµС€РµРЅРёСЏ РєРѕР»Р»РёР·РёР№ РёСЃРїРѕР»СЊР·СѓР№С‚Рµ РґРІРѕР№РЅРѕРµ С…РµС€РёСЂРѕРІР°РЅРёРµ.
 */
 
+
 #include <iostream>
-#define POINTS_SIZE 2
-#define ERR 1
+#include <string>
+#include <vector>
+#define TSIZE 8
+#define A1 23
+#define A2 17
 
-void Delete_points_memory(int **points, int points_num);
-int **Read_points(int points_num);
-float Area_calculation(int **points, int points_num);
-float Area_abs(float area);
+using namespace std;
 
-int main(void) {
-    int points_num = 0, Error = 0;
-    float area_of_poligon = 0;
-    int **points = NULL;
+template <class Type>
+struct HashTableNode {
+    Type key;
+    bool is_delete;
 
-    std::cin >> points_num;
-    if (!(int)points_num) {
-        Error = ERR;
+    HashTableNode(const Type &_key) : key(_key), is_delete(false) {}
+};
+
+template <class Type>
+class HashTable {
+private:
+    int count;
+    vector<HashTableNode<Type>*> table;
+
+    int hashFunc1(const Type &str, int tablesize);
+    int hashFunc2(const Type &str, int tablesize);
+    int hashFunction(int hash1, int hash2, int i, int tablesize);
+
+public:
+    HashTable() : table(TSIZE, NULL), count(0) {}
+
+    bool insert(const Type &_key);
+    bool remove(const Type &_key);
+    bool has(const Type &_key);
+    void reHash();
+};
+
+int main() {
+    HashTable<string> table;
+    char activity;
+    string value;
+
+    while (cin >> activity >> value) {
+
+        switch (activity) {
+        case '+':
+            if (table.insert(value))
+                cout << "OK" << endl;
+            else
+                cout << "FAIL" << endl;
+            break;
+
+        case '-':
+            if (table.remove(value))
+                cout << "OK" << endl;
+            else
+                cout << "FAIL" << endl;
+            break;
+
+        case '?':
+            if (table.has(value))
+                cout << "OK" << endl;
+            else
+                cout << "FAIL" << endl;
+            break;
+
+        default:
+            continue;
+        }
+
     }
-
-    if (Error != ERR) {
-        points = Read_points(points_num);
-    }
-    if ((Error == ERR) || (points == NULL)) {
-        std::cout << "[error]" << std::endl;
-        return 0;
-    }
-
-    area_of_poligon = Area_calculation(points, points_num);
-    std::cout << area_of_poligon;
-    Delete_points_memory(points, points_num);
     return 0;
 }
 
-void Delete_points_memory(int **points, int points_num) {
-    for (int i = 0; i<points_num; i++) delete(points[i]);
-    delete[] points;
+// РњРµС‚РѕРґС‹ HashTable ****************************************************
+
+template <typename Type>
+bool HashTable<Type>::insert(const Type &_key) {
+    if ((double)count / (double)table.size() >= 0.75) {
+        reHash();
+    }
+
+    int hash1 = hashFunc1(_key, table.size());
+    int hash2 = hashFunc2(_key, table.size());
+    int hash = hashFunction(hash1, hash2, 0, table.size());
+
+    for (int i = 0; i < table.size() && table[hash] != NULL; i++) {
+        if (table[hash]->is_delete == false && table[hash]->key == _key)
+            return false;
+
+        if (table[hash]->is_delete == true) {
+            table[hash]->key = _key;
+            table[hash]->is_delete = false;
+            count++;
+            return true;
+        }
+        hash = hashFunction(hash1, hash2, i + 1, table.size());
+    }
+
+    table[hash] = new HashTableNode<Type>(_key);
+    count++;
+
+    return true;
 }
 
-float Area_abs(float area) {
-    if (area<0) {
-        area = area * (-1);
+template <typename Type>
+bool HashTable<Type>::remove(const Type &_key) {
+    int hash1 = hashFunc1(_key, table.size());
+    int hash2 = hashFunc2(_key, table.size());
+    int hash = hashFunction(hash1, hash2, 0, table.size());
+
+    for (int i = 0; i < table.size(); i++) {
+        if (table[hash] == NULL) {
+            return false;
+        }
+        if (table[hash]->key == _key && table[hash]->is_delete == false) {
+            table[hash]->is_delete = true;
+            count--;
+            return true;
+        }
+        hash = hashFunction(hash1, hash2, i + 1, table.size());
     }
-    return area;
 }
 
-int **Read_points(int points_num) {
-    int **points;
-    if (!(points = new int*[points_num])) {
-        return NULL;
-    }
-    for (int i = 0; i < points_num; i++) {
-        points[i] = new int[POINTS_SIZE];
-    }
-    for (int i = 0; i < points_num; i++) {
-        std::cin >> points[i][0] >> points[i][1];
-    }
+template <typename Type>
+bool HashTable<Type>::has(const Type &_key) {
+    int hash1 = hashFunc1(_key, table.size());
+    int hash2 = hashFunc2(_key, table.size());
+    int hash = hashFunction(hash1, hash2, 0, table.size());
 
-    return points;
+    for (int i = 0; i < table.size() && table[hash] != NULL; i++) {
+        if (table[hash]->key == _key && table[hash]->is_delete == false) {
+            return true;
+        }
+        hash = hashFunction(hash1, hash2, i + 1, table.size());
+    }
+    return false;
 }
 
-float Area_calculation(int **points, int points_num) {
-    float area_of_poligon = 0;
-    for (int i = 0; i < points_num - 1; i++) {
-        area_of_poligon += (points[i + 1][1] + points[i][1])*(points[i + 1][0] - points[i][0]);
+template <typename Type>
+void HashTable<Type>::reHash() {
+    int hash = 0;
+    int buffer_size = table.size() * 2;
+    vector<HashTableNode<Type>*> buffer_table(buffer_size, NULL);
+
+    for (int i = 0; i < table.size(); i++) {
+        if (table[i] != NULL) {
+            if (table[i]->is_delete == false) {
+                hash = hashFunction(hashFunc1(table[i]->key, buffer_size), hashFunc2(table[i]->key, buffer_size), 0, buffer_size);
+
+                for (int j = 0; j < buffer_size && buffer_table[hash] != NULL; j++) {
+                    hash = hashFunction(hashFunc1(table[i]->key, buffer_size), hashFunc2(table[i]->key, buffer_size), j, buffer_size);
+                }
+
+                buffer_table[hash] = table[i];
+            }
+        }
     }
-    area_of_poligon += (points[0][1] + points[points_num - 1][1])*(points[0][0] - points[points_num - 1][0]);
-    area_of_poligon = (float)area_of_poligon / 2;
-    return Area_abs(area_of_poligon);
+    table = buffer_table;
+}
+
+// Hash С„СѓРЅРєС†РёРё ********************************************************
+template <typename Type>
+int HashTable<Type>::hashFunc1(const Type &str, int tablesize) {
+    int hash = 0;
+    for (int i = 0; i < str.size(); i++) {
+        hash = (hash * A1 + str[i]) % tablesize;
+    }
+    return hash;
+}
+
+template <typename Type>
+int HashTable<Type>::hashFunc2(const Type &str, int tablesize) {
+    int hash = 0;
+    for (int i = 0; i < str.size(); i++) {
+        hash = (hash * A2 + str[i]) % tablesize;
+    }
+    hash = (hash * 2 + 1) % tablesize; // hash2 РІР·С„РёРјРЅРѕРїСЂРѕСЃС‚РѕР№ СЃ tablesize
+    return hash;
+}
+
+template <typename Type>
+int HashTable<Type>::hashFunction(int hash1, int hash2, int i, int tablesize) {
+    if (tablesize == 0) {
+        return 0;
+    }
+    return (hash1 + hash2 * i) % tablesize;
 }

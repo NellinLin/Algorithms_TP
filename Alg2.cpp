@@ -1,102 +1,244 @@
 ﻿/*
-ID: 19660779
-Шишова Анастасия
+RunID: 20119906
 
-Дан отсортированный массив целых чисел A[0..n - 1] и массив целых чисел B[0..m - 1].
-Для каждого элемента массива B[i] найдите минимальный индекс k минимального элемента массива A, 
-равного или превосходящего B[i]: A[k] >= B[i].Если такого элемента нет, выведите n.Время работы 
-поиска k для каждого элемента B[i] : O(log(k)).
-n, m ≤ 10000.
-Формат входных данных.
-В первой строчке записаны числа n и m.Во второй и третьей массивы A и B соответственно.
+Шишова Анастасия
+Задача: 2_2
+
+Дано число N < 106 и последовательность целых чисел из [-231..231] длиной N. 
+Требуется построить бинарное дерево, заданное наивным порядком вставки. Т.е., 
+при добавлении очередного числа K в дерево с корнем root, если root→Key ≤ K, 
+то узел K добавляется в правое поддерево root; иначе в левое поддерево root. Выведите 
+элементы в порядке pre-order (сверху вниз).
+
+Рекурсия запрещена.
+
+PreOrder:
+in:
+    10
+    1 5 10 2 4 3 8 9 7 6
+out:
+    1 5 2 4 3 10 8 7 6 9 
 */
 
 #include <iostream>
+#include <vector>
 
-int* Read_mass(int num);
-void Delete_mass_memory(int *mass1, int *mass2);
-int Binary_search(int *A, int value, int left, int right);
-int Find_the_smallest_index(int *A, int value, int n);
-void Find_index(int *A, int *B, int n, int m);
+using namespace std;
+
+template <class T>
+class BinaryTree {
+private:
+    struct Node {
+        T key;
+        Node *left;
+        Node *right;
+        Node *parent;
+
+        Node();
+        Node(T& _key, Node *_left, Node *_right, Node * _parent);
+    };
+
+    Node *root;
+    int count;
+
+public:
+    BinaryTree();
+    ~BinaryTree();
+
+    void insert(T& value);
+    void clear();
+    vector<T> printPreOrder();
+    int getCount();
+    Node* getRoot() { return root; }
+};
+
 
 int main(void) {
-    int n = 0, m = 0;
-    std::cin >> n >> m;
+    int n, value;
+    BinaryTree<int> tree;
+    vector<int> pre_order;
 
-    int *A = Read_mass(n);
-    int *B = Read_mass(m);
-
-    if (A == NULL || B == NULL) {
-        std::cout << "[error]";
-        return 0;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> value;
+        tree.insert(value);
     }
-    
-    Find_index(A, B, n, m);
 
-    Delete_mass_memory(A, B);
+    pre_order = tree.printPreOrder();
+    for (vector<int>::iterator it = pre_order.begin(); it != pre_order.end(); it++) {
+        cout << *it << " ";
+    }
+
     return 0;
 }
 
-void Find_index(int *A, int *B, int n, int m) {
-    int index = 0;
-    for (int i = 0; i < m; i++) {
-        if (i == m - 1) {
-            std::cout << Find_the_smallest_index(A, B[i], n) << std::endl;
+
+// Конструкторы Node
+
+template <class T>
+BinaryTree<T>::Node::Node() {
+    key = 0;
+    left = nullptr;
+    right = nullptr;
+    parent = nullptr;
+}
+
+template <class T>
+BinaryTree<T>::Node::Node(T& _key, Node *_left, Node *_right, Node * _parent) {
+    key = _key;
+    left = _left;
+    right = _right;
+    parent = _parent;
+}
+
+
+// Конструкторы и методы BinaryTree
+
+template <class T>
+BinaryTree<T>::BinaryTree() {
+    root = nullptr;
+    count = 0;
+}
+
+template <class T>
+BinaryTree<T>::~BinaryTree() {
+    clear();
+}
+
+template <class T>
+void BinaryTree<T>::clear() {
+    if (root == nullptr) return;
+
+    Node *ptr = root;
+    Node *lastptr = nullptr;
+
+    while (root != nullptr)
+    {
+        if (ptr->left != nullptr)
+        {
+            ptr = ptr->left;
+            lastptr = ptr;
+            continue;
         }
-        else std::cout << Find_the_smallest_index(A, B[i], n) << " ";
-    }
-}
-
-int* Read_mass(int num) {
-    int *mass = NULL;
-    if (!(mass = new int[num])) {
-        return NULL;
-    }
-    for (int i = 0; i < num; i++) {
-        std::cin >> mass[i];
-    }
-    return mass;
-}
-
-void Delete_mass_memory(int *mass1, int *mass2) {
-    delete[]mass1;
-    delete[]mass2;
-}
-
-int Binary_search(int *A, int value, int left, int right) {
-    bool flag = false;
-    int middle_ind = 0;
-
-    while ((left <= right) && (flag != true)) {
-        middle_ind = (left + right) / 2;
-        if (A[middle_ind] == value) flag = true;
-        if (A[middle_ind] > value&&A[middle_ind - 1] < value) flag = true;
-        else if (A[middle_ind] > value) right = middle_ind - 1;
-        else left = middle_ind + 1;
-    }
-
-    return middle_ind;
-}
-
-int Find_the_smallest_index(int *A, int value, int n) {
-    if (value > A[n - 1]) {
-        return n;
-    }
-
-    int power1 = 0, power2 = 0;
-    int index = 0;
-
-    for (int i = 1; i < n; i *= 2) {
-        if (((A[power1] <= value) && (value <= A[i])) || (value<A[0])) {
-            power2 = i;
-            break;
+        if (ptr->right != nullptr)
+        {
+            ptr = ptr->right;
+            lastptr = ptr;
+            continue;
         }
-        power1 = i;
+        if (ptr->parent != nullptr)
+        {
+            ptr = ptr->parent;
+            if (ptr->left == lastptr)
+            {
+                lastptr = ptr;
+                delete ptr->left;
+                ptr->left = nullptr;
+            }
+            if (ptr->right == lastptr)
+            {
+                lastptr = ptr;
+                delete ptr->right;
+                ptr->right = nullptr;
+            }
+        }
+        else
+        {
+            delete ptr;
+            root = nullptr;
+        }
     }
-    if (power2 == 0) {
-        power2 = n - 1;
+}
+
+template <class T>
+void BinaryTree<T>::insert(T& value) {
+    Node *parent = nullptr;
+    Node *temp = root;
+
+    while (temp != nullptr) {
+        parent = temp;
+        if (temp->key <= value) {
+            temp = temp->right;
+        }
+        else {
+            temp = temp->left;
+        }
     }
 
-    index = Binary_search(A, value, power1, power2);
-    return index;
+    Node *new_node = new Node(value, nullptr, nullptr, parent);
+
+    if (parent == nullptr) {
+        root = new_node;
+    }
+    else if (parent->key <= new_node->key) {
+        parent->right = new_node;
+    }
+    else {
+        parent->left = new_node;
+    }
+
+    count++;
+}
+
+template <class T>
+int BinaryTree<T>::getCount() {
+    return count;
+}
+
+template <class T>
+vector<T> BinaryTree<T>::printPreOrder() {
+    Node *ptr = root;
+    Node *lastptr = nullptr;
+    vector<T> pre_order;
+
+    if (root == nullptr)
+        return pre_order;
+
+    pre_order.push_back(ptr->key);
+
+    while (true)
+    {
+        if (ptr->left != nullptr)
+        {
+            ptr = ptr->left;
+            pre_order.push_back(ptr->key);
+            continue;
+        }
+        if (ptr->right != nullptr)
+        {
+            ptr = ptr->right;
+            lastptr = ptr;
+            pre_order.push_back(ptr->key);
+            continue;
+        }
+        if (ptr->parent != nullptr)
+        {
+            ptr = ptr->parent;
+            if (ptr->right != nullptr && ptr->right != lastptr)
+            {
+                ptr = ptr->right;
+                pre_order.push_back(ptr->key);
+                lastptr = ptr;
+            }
+            else
+            {
+                while (ptr->parent != nullptr && (ptr->right == nullptr || ptr->right == lastptr))
+                {
+                    lastptr = ptr;
+                    ptr = ptr->parent;
+                }
+                if (ptr->right != lastptr)
+                {
+                    ptr = ptr->right;
+                    pre_order.push_back(ptr->key);
+                    lastptr = ptr;
+                }
+                if (ptr->parent == nullptr)
+                {
+                    return pre_order;
+                }
+            }
+        }
+    }
+
 }

@@ -1,244 +1,165 @@
-Ôªø/*
-RunID: 20119906
+/*
+RunID: 20485138
 
-–®–∏—à–æ–≤–∞ –ê–Ω–∞—Å—Ç–∞—Å–∏—è
-–ó–∞–¥–∞—á–∞: 2_2
+ÿË¯Ó‚‡ ¿Ì‡ÒÚ‡ÒËˇ
+«‡‰‡˜‡: 2
 
-–î–∞–Ω–æ —á–∏—Å–ª–æ N < 106 –∏ –ø–æ—Å–ª–µ–¥–æ–≤–∞—Ç–µ–ª—å–Ω–æ—Å—Ç—å —Ü–µ–ª—ã—Ö —á–∏—Å–µ–ª –∏–∑ [-231..231] –¥–ª–∏–Ω–æ–π N. 
-–¢—Ä–µ–±—É–µ—Ç—Å—è –ø–æ—Å—Ç—Ä–æ–∏—Ç—å –±–∏–Ω–∞—Ä–Ω–æ–µ –¥–µ—Ä–µ–≤–æ, –∑–∞–¥–∞–Ω–Ω–æ–µ –Ω–∞–∏–≤–Ω—ã–º –ø–æ—Ä—è–¥–∫–æ–º –≤—Å—Ç–∞–≤–∫–∏. –¢.–µ., 
-–ø—Ä–∏ –¥–æ–±–∞–≤–ª–µ–Ω–∏–∏ –æ—á–µ—Ä–µ–¥–Ω–æ–≥–æ —á–∏—Å–ª–∞ K –≤ –¥–µ—Ä–µ–≤–æ —Å –∫–æ—Ä–Ω–µ–º root, –µ—Å–ª–∏ root‚ÜíKey ‚â§ K, 
-—Ç–æ —É–∑–µ–ª K –¥–æ–±–∞–≤–ª—è–µ—Ç—Å—è –≤ –ø—Ä–∞–≤–æ–µ –ø–æ–¥–¥–µ—Ä–µ–≤–æ root; –∏–Ω–∞—á–µ –≤ –ª–µ–≤–æ–µ –ø–æ–¥–¥–µ—Ä–µ–≤–æ root. –í—ã–≤–µ–¥–∏—Ç–µ 
-—ç–ª–µ–º–µ–Ω—Ç—ã –≤ –ø–æ—Ä—è–¥–∫–µ pre-order (—Å–≤–µ—Ä—Ö—É –≤–Ω–∏–∑).
-
-–†–µ–∫—É—Ä—Å–∏—è –∑–∞–ø—Ä–µ—â–µ–Ω–∞.
-
-PreOrder:
-in:
-    10
-    1 5 10 2 4 3 8 9 7 6
-out:
-    1 5 2 4 3 10 8 7 6 9 
+ƒ‡Ì ÌÂ‚Á‚Â¯ÂÌÌ˚È ÌÂÓËÂÌÚËÓ‚‡ÌÌ˚È „‡Ù. ¬ „‡ÙÂ ÏÓÊÂÚ ·˚Ú¸ ÌÂÒÍÓÎ¸ÍÓ Í‡Ú˜‡È¯Ëı ÔÛÚÂÈ ÏÂÊ‰Û Í‡ÍËÏË-ÚÓ ‚Â¯ËÌ‡ÏË. Õ‡È‰ËÚÂ ÍÓÎË˜ÂÒÚ‚Ó ‡ÁÎË˜Ì˚ı Í‡Ú˜‡È¯Ëı ÔÛÚÂÈ ÏÂÊ‰Û Á‡‰‡ÌÌ˚ÏË ‚Â¯ËÌ‡ÏË. “Â·ÛÂÏ‡ˇ ÒÎÓÊÌÓÒÚ¸ O(V+E).
+‘ÓÏ‡Ú ‚‚Ó‰‡.
+v: ÍÓÎ-‚Ó ‚Â¯ËÌ (Ï‡ÍÒ. 50000),
+n: ÍÓÎ-‚Ó Â·Â (Ï‡ÍÒ. 200000),
+n Ô‡ Â·ÂÌ˚ı ‚Â¯ËÌ,
+Ô‡‡ ‚Â¯ËÌ u, w ‰Îˇ Á‡ÔÓÒ‡.
+‘ÓÏ‡Ú ‚˚‚Ó‰‡.
+ ÓÎË˜ÂÒÚ‚Ó Í‡Ú˜‡È¯Ëı ÔÛÚÂÈ ÓÚ u Í w.
 */
 
 #include <iostream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
-template <class T>
-class BinaryTree {
+
+struct IGraph {
+    virtual ~IGraph() {}
+
+    virtual void AddEdge(int from, int to) = 0;
+
+    virtual int VerticesCount() const = 0;
+
+    virtual std::vector<int> GetNextVertices(int vertex) const = 0;
+    virtual std::vector<int> GetPrevVertices(int vertex) const = 0;
+};
+
+class ListGraph : public IGraph {
+public:
+    ListGraph(int count);
+    ListGraph(const IGraph& graph);
+
+    ~ListGraph();
+    virtual void AddEdge(int from, int to) override;
+    virtual int VerticesCount() const override;
+
+    virtual std::vector<int> GetNextVertices(int vertex) const override;
+    virtual std::vector<int> GetPrevVertices(int vertex) const override;
+
 private:
-    struct Node {
-        T key;
-        Node *left;
-        Node *right;
-        Node *parent;
+    std::vector<std::vector<int>> adjacency_lists;
+};
 
-        Node();
-        Node(T& _key, Node *_left, Node *_right, Node * _parent);
-    };
+int DFS(const IGraph& graph, int vertex_to, int vertex_from, int V);
 
-    Node *root;
+struct Ways {
+    int min_way;
     int count;
 
-public:
-    BinaryTree();
-    ~BinaryTree();
-
-    void insert(T& value);
-    void clear();
-    vector<T> printPreOrder();
-    int getCount();
-    Node* getRoot() { return root; }
+    Ways() {
+        min_way = 0;
+    }
+    void setWaysCounts(int _way, int _count){
+        min_way = _way;
+        count = _count;
+    }
 };
 
 
-int main(void) {
-    int n, value;
-    BinaryTree<int> tree;
-    vector<int> pre_order;
 
-    cin >> n;
-    for (int i = 0; i < n; i++) {
-        cin >> value;
-        tree.insert(value);
-    }
+int main() {
+    int V, E;
+    int v_from, v_to;
 
-    pre_order = tree.printPreOrder();
-    for (vector<int>::iterator it = pre_order.begin(); it != pre_order.end(); it++) {
-        cout << *it << " ";
+    cin >> V >> E;
+    ListGraph graph(V);
+
+    int vertex1, vertex2;
+    for (int i = 0; i < E; i++) {
+        cin >> vertex1 >> vertex2;
+        graph.AddEdge(vertex1, vertex2);
     }
+    cin >> v_from >> v_to;
+    cout << DFS(graph, v_to, v_from, V);
 
     return 0;
 }
 
 
-// –ö–æ–Ω—Å—Ç—Ä—É–∫—Ç–æ—Ä—ã Node
+// Graph *******************************************************************
 
-template <class T>
-BinaryTree<T>::Node::Node() {
-    key = 0;
-    left = nullptr;
-    right = nullptr;
-    parent = nullptr;
+ListGraph::ListGraph(int count) {
+    adjacency_lists.resize(count);
 }
 
-template <class T>
-BinaryTree<T>::Node::Node(T& _key, Node *_left, Node *_right, Node * _parent) {
-    key = _key;
-    left = _left;
-    right = _right;
-    parent = _parent;
+ListGraph::ListGraph(const IGraph& graph) {
+    for (int i = 0; i < graph.VerticesCount(); ++i) {
+        adjacency_lists.push_back(graph.GetNextVertices(i));
+    }
 }
 
-
-// –ö–æ–Ω—Å—Ç—Ä—É–∫—Ç–æ—Ä—ã –∏ –º–µ—Ç–æ–¥—ã BinaryTree
-
-template <class T>
-BinaryTree<T>::BinaryTree() {
-    root = nullptr;
-    count = 0;
+ListGraph::~ListGraph() {
+    adjacency_lists.clear();
 }
 
-template <class T>
-BinaryTree<T>::~BinaryTree() {
-    clear();
+void ListGraph::AddEdge(int from, int to) {
+    adjacency_lists[from].push_back(to);
 }
 
-template <class T>
-void BinaryTree<T>::clear() {
-    if (root == nullptr) return;
+int ListGraph::VerticesCount() const {
+    return adjacency_lists.size();
+}
 
-    Node *ptr = root;
-    Node *lastptr = nullptr;
+std::vector<int> ListGraph::GetNextVertices(int vertex) const {
+    std::vector<int> next;
+    for (int i = 0; i < adjacency_lists[vertex].size(); ++i) {
+        next.push_back(adjacency_lists[vertex][i]);
+    }
+    return next;
+}
 
-    while (root != nullptr)
-    {
-        if (ptr->left != nullptr)
-        {
-            ptr = ptr->left;
-            lastptr = ptr;
-            continue;
-        }
-        if (ptr->right != nullptr)
-        {
-            ptr = ptr->right;
-            lastptr = ptr;
-            continue;
-        }
-        if (ptr->parent != nullptr)
-        {
-            ptr = ptr->parent;
-            if (ptr->left == lastptr)
-            {
-                lastptr = ptr;
-                delete ptr->left;
-                ptr->left = nullptr;
-            }
-            if (ptr->right == lastptr)
-            {
-                lastptr = ptr;
-                delete ptr->right;
-                ptr->right = nullptr;
+std::vector<int> ListGraph::GetPrevVertices(int vertex) const {
+    std::vector<int> prev;
+    for (int i = 0; i < adjacency_lists.size(); ++i) {
+        for (int j = 0; j < adjacency_lists[i].size(); ++j) {
+            if (adjacency_lists[i][j] == vertex) {
+                prev.push_back(i);
             }
         }
-        else
-        {
-            delete ptr;
-            root = nullptr;
-        }
     }
+    return prev;
 }
 
-template <class T>
-void BinaryTree<T>::insert(T& value) {
-    Node *parent = nullptr;
-    Node *temp = root;
+// Functions *******************************************************************
 
-    while (temp != nullptr) {
-        parent = temp;
-        if (temp->key <= value) {
-            temp = temp->right;
-        }
-        else {
-            temp = temp->left;
-        }
-    }
+int DFS(const IGraph& graph, int vertex_to, int vertex_from, int V) {
+    vector<bool> visited(V, false);
+    vector<Ways> ways(visited.size());
+    queue<int> q;
 
-    Node *new_node = new Node(value, nullptr, nullptr, parent);
+    q.push(vertex_from);
+    visited[vertex_from] = true;
+    ways[vertex_from].setWaysCounts(0, 1);
 
-    if (parent == nullptr) {
-        root = new_node;
-    }
-    else if (parent->key <= new_node->key) {
-        parent->right = new_node;
-    }
-    else {
-        parent->left = new_node;
-    }
+    while (!q.empty()) {
+        int vertex = q.front();
+        q.pop();
 
-    count++;
-}
-
-template <class T>
-int BinaryTree<T>::getCount() {
-    return count;
-}
-
-template <class T>
-vector<T> BinaryTree<T>::printPreOrder() {
-    Node *ptr = root;
-    Node *lastptr = nullptr;
-    vector<T> pre_order;
-
-    if (root == nullptr)
-        return pre_order;
-
-    pre_order.push_back(ptr->key);
-
-    while (true)
-    {
-        if (ptr->left != nullptr)
-        {
-            ptr = ptr->left;
-            pre_order.push_back(ptr->key);
-            continue;
-        }
-        if (ptr->right != nullptr)
-        {
-            ptr = ptr->right;
-            lastptr = ptr;
-            pre_order.push_back(ptr->key);
-            continue;
-        }
-        if (ptr->parent != nullptr)
-        {
-            ptr = ptr->parent;
-            if (ptr->right != nullptr && ptr->right != lastptr)
-            {
-                ptr = ptr->right;
-                pre_order.push_back(ptr->key);
-                lastptr = ptr;
+        std::vector<int> adjacentVertices = graph.GetNextVertices(vertex);
+        for (int i = 0; i < adjacentVertices.size(); i++) {
+            if (!visited[adjacentVertices[i]]) {
+                ways[adjacentVertices[i]].setWaysCounts(ways[vertex].min_way + 1, ways[vertex].count);
+                visited[adjacentVertices[i]] = true;
+                q.push(adjacentVertices[i]);
             }
-            else
-            {
-                while (ptr->parent != nullptr && (ptr->right == nullptr || ptr->right == lastptr))
-                {
-                    lastptr = ptr;
-                    ptr = ptr->parent;
+            else {
+                if ((ways[vertex].min_way + 1) < ways[adjacentVertices[i]].min_way) {
+                    ways[adjacentVertices[i]].setWaysCounts(ways[vertex].min_way, 1);
                 }
-                if (ptr->right != lastptr)
-                {
-                    ptr = ptr->right;
-                    pre_order.push_back(ptr->key);
-                    lastptr = ptr;
-                }
-                if (ptr->parent == nullptr)
-                {
-                    return pre_order;
+                else if ((ways[vertex].min_way + 1) == ways[adjacentVertices[i]].min_way) {
+                    ways[adjacentVertices[i]].count += ways[vertex].count;
                 }
             }
         }
     }
 
+    return ways[vertex_to].count;
 }
